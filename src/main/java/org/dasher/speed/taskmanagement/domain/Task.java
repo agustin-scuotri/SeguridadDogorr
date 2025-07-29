@@ -10,14 +10,11 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "task")
-public class Task extends AbstractEntity<Long> {
+public class Task extends AbstractEntity {   // ← sin <Long>
 
     public static final int DESCRIPTION_MAX_LENGTH = 255;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "task_id")
-    private Long id;
+    /* ---------- columnas propias ---------- */
 
     @Column(name = "description", nullable = false, length = DESCRIPTION_MAX_LENGTH)
     @Size(max = DESCRIPTION_MAX_LENGTH)
@@ -30,15 +27,11 @@ public class Task extends AbstractEntity<Long> {
     @Nullable
     private LocalDate dueDate;
 
-    @Override
-    public @Nullable Long getId() {
-        return id;
-    }
+    /* ---------- getters / setters ---------- */
 
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -46,7 +39,6 @@ public class Task extends AbstractEntity<Long> {
     public Instant getCreationDate() {
         return creationDate;
     }
-
     public void setCreationDate(Instant creationDate) {
         this.creationDate = creationDate;
     }
@@ -54,7 +46,6 @@ public class Task extends AbstractEntity<Long> {
     public @Nullable LocalDate getDueDate() {
         return dueDate;
     }
-
     public void setDueDate(@Nullable LocalDate dueDate) {
         this.dueDate = dueDate;
     }

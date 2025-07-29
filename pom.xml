@@ -43,6 +43,12 @@
     </dependencyManagement>
 
     <dependencies>
+    <!-- MySQL Connector/J compatible con Spring Boot 3 (Jakarta) -->
+		<dependency>
+		    <groupId>com.mysql</groupId>
+		    <artifactId>mysql-connector-j</artifactId>
+		    <version>8.4.0</version> <!-- o la más reciente 8.x -->
+		</dependency>
         <!-- Vaadin -->
         <dependency>
             <groupId>com.vaadin</groupId>

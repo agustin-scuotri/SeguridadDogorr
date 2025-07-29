@@ -1,13 +1,25 @@
 package org.dasher.speed.base.domain;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.util.ProxyUtils;
 
 @MappedSuperclass
-public abstract class AbstractEntity<ID> {
+public abstract class AbstractEntity {
 
-    public abstract @Nullable ID getId();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {
@@ -16,29 +28,18 @@ public abstract class AbstractEntity<ID> {
 
     @Override
     public int hashCode() {
-        // Hashcode should never change during the lifetime of an object. Because of
-        // this we can't use getId() to calculate the hashcode. Unless you have sets
-        // with lots of entities in them, returning the same hashcode should not be a
-        // problem.
         return ProxyUtils.getUserClass(getClass()).hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        } else if (obj == this) {
-            return true;
-        }
+        if (obj == null) return false;
+        if (obj == this) return true;
 
         var thisUserClass = ProxyUtils.getUserClass(getClass());
         var otherUserClass = ProxyUtils.getUserClass(obj);
-        if (thisUserClass != otherUserClass) {
-            return false;
-        }
+        if (!thisUserClass.equals(otherUserClass)) return false;
 
-        var id = getId();
-        return id != null && id.equals(((AbstractEntity<?>) obj).getId());
+        return getId() != null && getId().equals(((AbstractEntity) obj).getId());
     }
-
 }
