@@ -11,7 +11,8 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-
+import com.vaadin.flow.server.auth.AnonymousAllowed;
+@AnonymousAllowed
 @Route("login")
 @PageTitle("Login")
 public class LoginView extends Div implements BeforeEnterObserver {

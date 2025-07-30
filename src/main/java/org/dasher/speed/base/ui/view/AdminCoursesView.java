@@ -24,8 +24,10 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.time.LocalDate;
+import jakarta.annotation.security.RolesAllowed;
 
+import java.time.LocalDate;
+@RolesAllowed("ADMIN")
 @PageTitle("Cursos")
 @Route(value = "admin/courses", layout = MainLayout.class)
 public class AdminCoursesView extends VerticalLayout {

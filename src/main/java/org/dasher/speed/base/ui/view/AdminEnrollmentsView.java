@@ -26,12 +26,14 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
+import jakarta.annotation.security.RolesAllowed;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
+@RolesAllowed("ADMIN")
 @PageTitle("Inscripciones")
 @Route(value = "admin/enrollments", layout = MainLayout.class)
 public class AdminEnrollmentsView extends VerticalLayout {

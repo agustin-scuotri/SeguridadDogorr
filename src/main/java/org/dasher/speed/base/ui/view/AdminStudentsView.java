@@ -20,12 +20,15 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+
+import jakarta.annotation.security.RolesAllowed;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 import java.util.UUID;
-
+@RolesAllowed("ADMIN")
 @PageTitle("Alumnos")
 @Route(value = "admin/students", layout = MainLayout.class)
 public class AdminStudentsView extends VerticalLayout {

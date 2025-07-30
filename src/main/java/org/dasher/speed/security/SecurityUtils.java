@@ -1,20 +1,32 @@
-package org.dasher.speed.security;   // ⬅ Pon el paquete que corresponda
+package org.dasher.speed.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
 public final class SecurityUtils {
 
-    private SecurityUtils() {}        // util-class, no instanciable
+    private SecurityUtils() {
+        // utilería estática
+    }
 
-    /** Devuelve <code>true</code> si el usuario YA está autenticado. */
+    /**
+     * Dice si hay un usuario autenticado en Spring Security
+     */
     public static boolean isUserLoggedIn() {
-        Authentication auth = SecurityContextHolder
-                                  .getContext()
-                                  .getAuthentication();
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth != null
-                && auth.isAuthenticated()
-                && !"anonymousUser".equals(auth.getPrincipal());
+            && auth.isAuthenticated()
+            && !(auth instanceof AnonymousAuthenticationToken);
+    }
+
+    /**
+     * Devuelve el nombre del usuario que Spring Security puso en el Authentication.
+     * 
+     * @return el username, o null si no hay ninguno
+     */
+    public static String getUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : null;
     }
 }

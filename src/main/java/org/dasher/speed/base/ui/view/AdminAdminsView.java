@@ -22,8 +22,11 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
+import jakarta.annotation.security.RolesAllowed;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+@RolesAllowed("ADMIN")
 @PageTitle("Administradores")
 @Route(value = "admin/admins", layout = MainLayout.class)
 public class AdminAdminsView extends VerticalLayout {
