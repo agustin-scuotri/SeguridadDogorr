@@ -16,26 +16,38 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @Route("login")
 @PageTitle("Login")
 public class LoginView extends Div implements BeforeEnterObserver {
+  private final LoginOverlay login = new LoginOverlay();
 
-    private final LoginOverlay login = new LoginOverlay();
+  public LoginView() {
+    login.setAction("login");
+    login.setOpened(true);
+    login.setForgotPasswordButtonVisible(false);
+    add(login);
+  }
 
-    public LoginView() {
-        /*  ***** ESTA LÍNEA ES CLAVE *****  */
-        login.setAction("login");          // <- endpoint de Spring Security
-        login.setOpened(true);
-        login.setForgotPasswordButtonVisible(false);   // opcional
-        add(login);
+  @Override
+  public void beforeEnter(BeforeEnterEvent event) {
+    if (SecurityUtils.isUserLoggedIn()) {
+      // Ya autenticado → redirijo según rol
+      String role = SecurityUtils.getUserRole();
+      switch (role) {
+        case "ROLE_ADMIN":
+          event.forwardTo(AdminView.class);
+          break;
+        case "ROLE_PROFESSOR":
+          event.forwardTo(ProfessorView.class);
+          break;
+        case "ROLE_STUDENT":
+          event.forwardTo(StudentView.class);
+          break;
+        default:
+          event.forwardTo(MainView.class);
+      }
+      return;
     }
-
-    @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-        if (SecurityUtils.isUserLoggedIn()) {
-            event.forwardTo("");           // ya autenticado → home
-        }
-        if (event.getLocation().getQueryParameters()
-                 .getParameters().containsKey("error")) {
-            login.setError(true);          // credenciales incorrectas
-        }
+    if (event.getLocation().getQueryParameters()
+              .getParameters().containsKey("error")) {
+      login.setError(true);
     }
+  }
 }
-

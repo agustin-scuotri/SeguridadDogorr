@@ -24,13 +24,15 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
+import jakarta.annotation.security.RolesAllowed;
+
 import java.util.List;
 import java.util.OptionalDouble;
-
+@RolesAllowed("PROFESSOR")
 @PageTitle("Panel Profesor")
 @Route(value = "professor", layout = MainLayout.class)
 public class ProfessorView extends VerticalLayout {
-
+	
     private final StudentService studentService;
     private final SeatService seatService;
     private final Grid<Course> courseGrid = new Grid<>(Course.class, false);

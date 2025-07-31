@@ -18,6 +18,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
+import jakarta.annotation.security.RolesAllowed;
+@RolesAllowed("STUDENT")
 @PageTitle("Mi Perfil - Alumno")
 @Route(value = "student/profile", layout = MainLayout.class)
 public class StudentProfileView extends VerticalLayout {

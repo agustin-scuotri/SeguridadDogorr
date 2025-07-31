@@ -1,8 +1,10 @@
 package org.dasher.speed.security;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +18,21 @@ public class VaadinAuthSuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication)
             throws IOException, ServletException {
-        // Simplemente redirect al inicio de Vaadin
-        response.sendRedirect(request.getContextPath() + "/");
+
+        // Redirección simple según rol
+        String role = authentication.getAuthorities().stream()
+                .findFirst()
+                .map(a -> a.getAuthority())
+                .orElse("");
+
+        if ("ROLE_ADMIN".equals(role)) {
+            response.sendRedirect("/admin");
+        } else if ("ROLE_PROFESSOR".equals(role)) {
+            response.sendRedirect("/professor");
+        } else if ("ROLE_STUDENT".equals(role)) {
+            response.sendRedirect("/student");
+        } else {
+            response.sendRedirect("/");
+        }
     }
 }

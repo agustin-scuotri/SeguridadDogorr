@@ -63,12 +63,14 @@ public class MainLayout extends AppLayout {
                     tabs.add(tab("Mi Perfil",       StudentProfileView.class));
                 }
             }
-            Tab logoutTab = new Tab(new Button("Cerrar sesión", e -> {
-                VaadinSession.getCurrent().close();
-                UI.getCurrent().navigate("login");
-            }));
+
+            Button logoutButton = new Button("Cerrar sesión", e -> {
+                UI.getCurrent().getPage().setLocation("/perform-logout");
+            });
+            Tab logoutTab = new Tab(logoutButton);
             styleSingleTab(logoutTab);
             tabs.add(logoutTab);
+
         }
 
         HorizontalLayout box = new HorizontalLayout(tabs);
@@ -77,7 +79,8 @@ public class MainLayout extends AppLayout {
                 .set("border-radius", "8px")
                 .set("box-shadow", "0 1px 4px rgba(0,0,0,.15)")
                 .set("padding", "4px 10px");
-        box.setPadding(false); box.setMargin(false);
+        box.setPadding(false);
+        box.setMargin(false);
         return box;
     }
 

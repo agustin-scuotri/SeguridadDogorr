@@ -14,8 +14,10 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.List;
+import jakarta.annotation.security.RolesAllowed;
 
+import java.util.List;
+@RolesAllowed("STUDENT")
 @PageTitle("Mis Inscripciones")
 @Route(value = "student/enrollments", layout = MainLayout.class)
 public class StudentEnrollmentsView extends VerticalLayout {

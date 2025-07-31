@@ -1,43 +1,51 @@
 package org.dasher.speed.security;
 
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
+import com.vaadin.flow.server.UIInitEvent;
+import com.vaadin.flow.server.UIInitListener;
 import com.vaadin.flow.server.VaadinSession;
-import org.dasher.speed.base.domain.User;
-import org.dasher.speed.base.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.vaadin.flow.component.UI;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.dasher.speed.base.domain.User;
+import org.dasher.speed.base.service.UserService;
 
-/**
- * Cada vez que Vaadin inicializa una nueva UI,
- * comprobamos si Spring Security tiene un usuario autenticado
- * y lo guardamos en la VaadinSession.
- */
 @Component
 public class SecurityServiceInitListener implements VaadinServiceInitListener {
 
-    private final UserRepository userRepo;
+    private final UserService userService;
 
-    @Autowired
-    public SecurityServiceInitListener(UserRepository userRepo) {
-        this.userRepo = userRepo;
+    public SecurityServiceInitListener(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     public void serviceInit(ServiceInitEvent event) {
-        event.getSource().addUIInitListener(uiInit -> {
-            UI ui = uiInit.getUI();
-            // Antes de cada navegación...
-            ui.addBeforeEnterListener((BeforeEnterEvent before) -> {
-                if (SecurityUtils.isUserLoggedIn()) {
-                    String username = SecurityUtils.getUsername();
-                    userRepo.findByUsername(username).ifPresent(user ->
-                        VaadinSession.getCurrent().setAttribute(User.class, user)
-                    );
-                }
-            });
+        // acá corrige: sobre el source (VaadinService) se agrega el UIInitListener
+        event.getSource().addUIInitListener(new UIInitListener() {
+            @Override
+            public void uiInit(UIInitEvent uiInitEvent) {
+                // antes de cada navegación
+                uiInitEvent.getUI().addBeforeEnterListener(before -> {
+                    VaadinSession session = VaadinSession.getCurrent();
+                    if (session == null) return;
+                    if (session.getAttribute(User.class) != null) {
+                        return; // ya está cargado
+                    }
+
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    if (auth != null && auth.isAuthenticated()
+                            && auth.getPrincipal() instanceof org.springframework.security.core.userdetails.User springUser) {
+
+                        String username = springUser.getUsername();
+                        userService.findByUsername(username).ifPresent(domainUser -> {
+                            session.setAttribute(User.class, domainUser);
+                        });
+                    }
+                });
+            }
         });
     }
 }

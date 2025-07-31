@@ -11,48 +11,48 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class CommonSecurityConfig extends VaadinWebSecurity {
 
-    private final DbUserDetailsService userDetailsService;
-    private final PasswordEncoder      passwordEncoder;
+    private final DbUserDetailsService uds;
+    private final PasswordEncoder encoder;
     private final VaadinAuthSuccessHandler successHandler;
 
-    public CommonSecurityConfig(DbUserDetailsService uds,
-                                PasswordEncoder encoder,
-                                VaadinAuthSuccessHandler successHandler) {
-        this.userDetailsService = uds;
-        this.passwordEncoder    = encoder;
-        this.successHandler     = successHandler;
+    public CommonSecurityConfig(
+            DbUserDetailsService uds,
+            PasswordEncoder encoder,
+            VaadinAuthSuccessHandler successHandler) {
+        this.uds = uds;
+        this.encoder = encoder;
+        this.successHandler = successHandler;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                // login y assets
-                .requestMatchers(
-                    "/login", "/VAADIN/**", "/frontend/**", "/webjars/**", "/error", "/h2-console/**"
-                ).permitAll()
-                // rutas por rol
+                .requestMatchers("/login", "/perform-logout").permitAll()
                 .requestMatchers("/admin/**").hasRole(AppRoles.ADMIN.name())
                 .requestMatchers("/professor/**").hasRole(AppRoles.PROFESSOR.name())
                 .requestMatchers("/student/**").hasRole(AppRoles.STUDENT.name())
         );
 
-        // Configura tu LoginView (VaadinOverlay / Router)
         setLoginView(http, LoginView.class);
 
-        // Asocio mi success handler
         http.formLogin(form -> form
+                .loginPage("/login")
                 .successHandler(successHandler)
+                .permitAll()
         );
 
-        // Finalmente, force el resto a autenticarse
+        // Dejás el provider custom
+        http.authenticationProvider(authenticationProvider());
+
         super.configure(http);
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        var provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
+    DaoAuthenticationProvider authenticationProvider() {
+        var p = new DaoAuthenticationProvider();
+        p.setUserDetailsService(uds);
+        p.setPasswordEncoder(encoder);
+        return p;
     }
 }
+	
